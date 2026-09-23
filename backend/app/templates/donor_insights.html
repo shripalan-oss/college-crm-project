@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Donor Insights - Collab CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><span class="text-warning">Donor</span> Intelligence (RFM)</h2>
+    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<div class="card border-warning mb-4">
+    <div class="card-body bg-light">
+        <h5 class="card-title">Recency, Frequency, Monetary (RFM) Analysis</h5>
+        <p class="card-text text-muted">This algorithmic analysis helps identify active vs lapsing donors based on their donation history patterns.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-warning">
+                    <tr>
+                        <th>Donor Name</th>
+                        <th>Last Donation Date</th>
+                        <th>Days Since Last</th>
+                        <th>Frequency (Count)</th>
+                        <th>Total Given ($)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in insights %}
+                    <tr class="{% if i.status == 'Lapsing' %}table-danger{% elif i.status == 'Active' %}table-success{% endif %}">
+                        <td class="fw-bold">{{ i.name }}</td>
+                        <td>{{ i.last_donation if i.last_donation else 'N/A' }}</td>
+                        <td>{{ i.days_since if i.days_since != None else 'N/A' }}</td>
+                        <td>{{ i.frequency }}</td>
+                        <td class="fw-bold">${{ "%.2f"|format(i.total_given) if i.total_given else "0.00" }}</td>
+                        <td>
+                            {% if i.status == 'Lapsing' %}
+                                <span class="badge bg-danger">Lapsing</span>
+                            {% elif i.status == 'Active' %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ i.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No insights available. Add donations to generate insights.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

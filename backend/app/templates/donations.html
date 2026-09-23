@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Donations - Collab CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><span class="text-info">Donations</span> Tracker</h2>
+    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<div class="row">
+    <!-- Add Donation Form -->
+    <div class="col-md-4 mb-4">
+        <div class="card border-info">
+            <div class="card-header text-white bg-info">
+                Record New Donation
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/donations/add">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Donor</label>
+                        <select name="donor_id" class="form-select" required>
+                            <option value="">-- Select Donor --</option>
+                            {% for donor in donors %}
+                            <option value="{{ donor.id }}">{{ donor.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Campaign (Optional)</label>
+                        <select name="campaign_id" class="form-select">
+                            <option value="">-- No Campaign --</option>
+                            {% for c in campaigns %}
+                            <option value="{{ c.id }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Donation Amount ($)</label>
+                        <input type="number" name="amount" class="form-control" placeholder="100.00" step="0.01" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-info w-100 text-white fw-bold">Record Donation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donations Table -->
+    <div class="col-md-8">
+        <div class="card border-info">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead class="table-info">
+                            <tr>
+                                <th>Donor</th>
+                                <th>Campaign</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in donations %}
+                            <tr>
+                                <td class="fw-bold">{{ d.donor.name }}</td>
+                                <td>
+                                    {% if d.campaign %}
+                                        <span class="badge bg-secondary">{{ d.campaign.name }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-success fw-bold">${{ "%.2f"|format(d.amount) }}</td>
+                                <td>{{ d.date.strftime("%Y-%m-%d") }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">No donations recorded yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

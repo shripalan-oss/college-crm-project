@@ -1,0 +1,60 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Dashboard from './components/Dashboard';
+import Login from './components/Login';
+import Register from './components/Register';
+import Donors from './components/Donors';
+import Campaigns from './components/Campaigns';
+import Donations from './components/Donations';
+import Outcomes from './components/Outcomes';
+import Insights from './components/Insights';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+// Configure axios for credentials (cookies)
+axios.defaults.withCredentials = true;
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if user is logged in
+    axios.get(import.meta.env.VITE_API_URL + '/api/auth/me')
+      .then(res => {
+        setUser(res.data.user);
+        setLoading(false);
+      })
+      .catch(() => {
+        setUser(null);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <Router>
+      {user && <Navbar user={user} setUser={setUser} />}
+      <div className="container main-container">
+        <Routes>
+          <Route path="/" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
+          <Route path="/login" element={!user ? <Login setUser={setUser} /> : <Navigate to="/" />} />
+          <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
+          <Route path="/donors" element={user ? <Donors /> : <Navigate to="/login" />} />
+          <Route path="/campaigns" element={user ? <Campaigns /> : <Navigate to="/login" />} />
+          <Route path="/donations" element={user ? <Donations /> : <Navigate to="/login" />} />
+          <Route path="/outcomes" element={user ? <Outcomes /> : <Navigate to="/login" />} />
+          <Route path="/donors/insights" element={user ? <Insights /> : <Navigate to="/login" />} />
+        </Routes>
+      </div>
+      <footer className="footer mt-auto">
+        <div className="container">
+          <span>&copy; 2026 Collab CRM - College Database Project</span>
+        </div>
+      </footer>
+    </Router>
+  );
+}
+
+export default App;

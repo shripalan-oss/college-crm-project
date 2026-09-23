@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Collab CRM{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card bg-primary text-white p-4" style="background-color: #004085 !important; border-radius: 10px;">
+            <h2 class="mb-1">Welcome, {{ current_user.name }}!</h2>
+            <p class="mb-0 fs-5"><i class="bi bi-building"></i> Organization: <strong>{{ current_user.tenant_id }}</strong></p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-6">
+        <div class="card h-100 text-center shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                <h4 class="card-title text-primary mb-3"><i class="bi bi-people"></i> Donors</h4>
+                <p class="card-text text-muted mb-4">Manage and view all registered donors.</p>
+                <a href="/donors" class="btn btn-outline-primary mt-auto px-4">View Donors</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-6">
+        <div class="card h-100 text-center shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                <h4 class="card-title text-success mb-3"><i class="bi bi-flag"></i> Campaigns</h4>
+                <p class="card-text text-muted mb-4">Track ongoing fund raising campaigns.</p>
+                <a href="/campaigns" class="btn btn-outline-success mt-auto px-4">View Campaigns</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 col-lg-4">
+        <div class="card h-100 text-center shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                <h4 class="card-title text-info mb-3"><i class="bi bi-cash-stack"></i> Donations</h4>
+                <p class="card-text text-muted mb-4">Monitor all donation transactions.</p>
+                <a href="/donations" class="btn btn-outline-info mt-auto px-4">View Donations</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-lg-4">
+        <div class="card h-100 text-center shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                <h4 class="card-title text-danger mb-3"><i class="bi bi-bullseye"></i> Outcomes</h4>
+                <p class="card-text text-muted mb-4">Track the real-world impact of your campaigns.</p>
+                <a href="/outcomes" class="btn btn-outline-danger mt-auto px-4">View Outcomes</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 col-lg-4">
+        <div class="card h-100 text-center shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center p-4">
+                <h4 class="card-title text-warning mb-3"><i class="bi bi-bar-chart"></i> Insights</h4>
+                <p class="card-text text-muted mb-4">Analyze donor behavior and RFM metrics.</p>
+                <a href="/donors/insights" class="btn btn-outline-warning mt-auto px-4 text-dark">Donor Insights</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12 text-center">
+        <div class="card shadow-sm p-4 bg-light">
+            <h5>Project Status</h5>
+            <p class="mb-0 text-muted">This CRM system is a student project for Database Management Systems.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

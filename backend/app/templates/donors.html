@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Donors - Collab CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><span class="text-primary">Donors</span> Directory</h2>
+    <a href="/" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+<div class="row">
+    <!-- Add Donor Form -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header text-white" style="background-color: #004085;">
+                Add New Donor
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/donors/add">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Donor Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. John Doe" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Contact Info</label>
+                        <input type="text" name="contact" class="form-control" placeholder="Email or Phone number">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tags</label>
+                        <input type="text" name="tags" class="form-control" placeholder="e.g. major, recurring, alumni">
+                        <div class="form-text">Separate tags with commas.</div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Add Donor</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donors Table -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Tags</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for donor in donors %}
+                            <tr>
+                                <td class="fw-bold">{{ donor.name }}</td>
+                                <td>{{ donor.contact }}</td>
+                                <td>
+                                    {% if donor.tags %}
+                                        <span class="badge bg-secondary">{{ donor.tags }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-4">No donors found. Add a donor to get started.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

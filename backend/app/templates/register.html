@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Collab CRM{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background-image: url("{{ url_for('static', filename='images/bg.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+    .register-container {
+        max-width: 500px;
+        margin: 60px auto;
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    .register-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    .register-header h2 {
+        color: #004085;
+        font-weight: bold;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-header">
+        <h2>Register Organization</h2>
+        <p class="text-muted">Create a new CRM workspace for your project group.</p>
+    </div>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Organization Name</label>
+            <input type="text" name="org_name" class="form-control" placeholder="e.g. Group 5 Team" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Your Name</label>
+            <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Email Address</label>
+            <input type="email" name="email" class="form-control" placeholder="student@university.edu" required>
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold">Password</label>
+            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+        </div>
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success btn-lg">Create Account</button>
+        </div>
+    </form>
+    
+    <div class="text-center mt-4">
+        <p>Already have an account? <a href="/login" style="color: #004085; font-weight: bold;">Log in here</a></p>
+    </div>
+</div>
+{% endblock %}
