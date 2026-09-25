@@ -21,6 +21,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), default="staff")
+    is_verified = db.Column(db.Boolean, default=False)
 
     def to_dict(self):
         return {
@@ -28,7 +29,8 @@ class User(db.Model, UserMixin):
             "tenant_id": self.tenant_id,
             "name": self.name,
             "email": self.email,
-            "role": self.role
+            "role": self.role,
+            "is_verified": self.is_verified
         }
 
 class Donor(db.Model):

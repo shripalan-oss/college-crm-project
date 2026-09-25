@@ -56,7 +56,7 @@ function Register() {
                         <input type="password" name="password" onChange={handleChange} className="form-control" placeholder="••••••••" required />
                     </div>
                     <div className="d-grid gap-2">
-                        <button type="submit" className="btn btn-success btn-lg">Create Account</button>
+                        <button type="submit" className="btn btn-primary btn-lg">Create Account</button>
                     </div>
                 </form>
                 
@@ -69,3 +69,5 @@ function Register() {
 }
 
 export default Register;
+
+

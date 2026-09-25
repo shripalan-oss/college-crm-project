@@ -22,7 +22,7 @@ function Navbar({ user, setUser }) {
                     Collab CRM
                 </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span className="navbar-toggler-icon" style={{ filter: 'invert(1)' }}></span>
+                    <span className="navbar-toggler-icon"></span>
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav ms-auto">
@@ -55,3 +55,5 @@ function Navbar({ user, setUser }) {
 }
 
 export default Navbar;
+
+

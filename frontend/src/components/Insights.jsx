@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { exportTableToPDF } from '../utils/exportToPDF';
 
 function Insights() {
     const [insights, setInsights] = useState([]);
@@ -11,14 +12,32 @@ function Insights() {
             .catch(console.error);
     }, []);
 
+    const handleExport = () => {
+        const columns = ['Donor Name', 'Last Donation Date', 'Days Since Last', 'Frequency', 'Total Given', 'Status'];
+        const data = insights.map(i => [
+            i.name,
+            i.last_donation || 'N/A',
+            i.days_since !== null ? i.days_since : 'N/A',
+            i.frequency,
+            `₹${i.total_given.toFixed(2)}`,
+            i.status
+        ]);
+        exportTableToPDF('Donor Intelligence (RFM)', columns, data, 'Donor_Insights');
+    };
+
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2><span className="text-warning">Donor</span> Intelligence (RFM)</h2>
-                <Link to="/" className="btn btn-secondary">Back to Dashboard</Link>
+                <h2><span className="fw-bold">Donor</span> Intelligence (RFM)</h2>
+                <div>
+                    <button onClick={handleExport} className="btn btn-outline-primary me-2">
+                        <i className="bi bi-file-earmark-pdf me-1"></i> Export PDF
+                    </button>
+                    <Link to="/" className="btn btn-outline-primary">Back to Dashboard</Link>
+                </div>
             </div>
 
-            <div className="card border-warning mb-4">
+            <div className="card mb-4">
                 <div className="card-body bg-light">
                     <h5 className="card-title">Recency, Frequency, Monetary (RFM) Analysis</h5>
                     <p className="card-text text-muted">This algorithmic analysis helps identify active vs lapsing donors based on their donation history patterns.</p>
@@ -29,24 +48,24 @@ function Insights() {
                 <div className="card-body p-0">
                     <div className="table-responsive">
                         <table className="table table-hover mb-0">
-                            <thead className="table-warning">
+                            <thead className="table-light">
                                 <tr>
                                     <th>Donor Name</th>
                                     <th>Last Donation Date</th>
                                     <th>Days Since Last</th>
                                     <th>Frequency (Count)</th>
-                                    <th>Total Given ($)</th>
+                                    <th>Total Given (₹)</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {insights.length > 0 ? insights.map(i => (
                                     <tr key={i.id} className={i.status === 'Lapsing' ? 'table-danger' : (i.status === 'Active' ? 'table-success' : '')}>
-                                        <td className="fw-bold">{i.name}</td>
+                                        <td className="fw-bold text-capitalize">{i.name}</td>
                                         <td>{i.last_donation || 'N/A'}</td>
                                         <td>{i.days_since !== null ? i.days_since : 'N/A'}</td>
                                         <td>{i.frequency}</td>
-                                        <td className="fw-bold">${i.total_given.toFixed(2)}</td>
+                                        <td className="fw-bold text-capitalize">₹{i.total_given.toFixed(2)}</td>
                                         <td>
                                             {i.status === 'Lapsing' && <span className="badge bg-danger">Lapsing</span>}
                                             {i.status === 'Active' && <span className="badge bg-success">Active</span>}
@@ -68,3 +87,5 @@ function Insights() {
 }
 
 export default Insights;
+
+

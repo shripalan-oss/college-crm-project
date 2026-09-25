@@ -49,11 +49,12 @@ function Login({ setUser }) {
                         <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="form-control" placeholder="••••••••" required />
                     </div>
                     <div className="d-grid gap-2">
-                        <button type="submit" className="btn btn-primary btn-lg" style={{ backgroundColor: '#004085' }}>Log In</button>
+                        <button type="submit" className="btn btn-primary btn-lg" >Log In</button>
                     </div>
                 </form>
                 
                 <div className="text-center mt-4">
+                    <p className="mb-2"><Link to="/forgot-password" style={{ color: '#004085', textDecoration: 'none' }}>Forgot your password?</Link></p>
                     <p>Don't have an account? <Link to="/register" style={{ color: '#004085', fontWeight: 'bold' }}>Register here</Link></p>
                 </div>
             </div>
@@ -62,3 +63,5 @@ function Login({ setUser }) {
 }
 
 export default Login;
+
+

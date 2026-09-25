@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { exportTableToPDF } from '../utils/exportToPDF';
 
 function Donations() {
     const [donations, setDonations] = useState([]);
@@ -31,17 +32,33 @@ function Donations() {
         }
     };
 
+    const handleExport = () => {
+        const columns = ['Donor', 'Campaign', 'Amount', 'Date'];
+        const data = donations.map(d => [
+            d.donor_name,
+            d.campaign_name || '-',
+            `₹${d.amount.toFixed(2)}`,
+            d.date ? d.date.substring(0, 10) : ''
+        ]);
+        exportTableToPDF('Donations Tracker', columns, data, 'Donations');
+    };
+
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2><span className="text-info">Donations</span> Tracker</h2>
-                <Link to="/" className="btn btn-secondary">Back to Dashboard</Link>
+                <h2><span className="fw-bold">Donations</span> Tracker</h2>
+                <div>
+                    <button onClick={handleExport} className="btn btn-outline-primary me-2 fw-bold">
+                        <i className="bi bi-file-earmark-pdf me-1"></i> Export PDF
+                    </button>
+                    <Link to="/" className="btn btn-outline-primary">Back to Dashboard</Link>
+                </div>
             </div>
 
             <div className="row">
                 <div className="col-md-4 mb-4">
-                    <div className="card border-info">
-                        <div className="card-header text-white bg-info">
+                    <div className="card">
+                        <div className="card-header fw-bold text-uppercase">
                             Record New Donation
                         </div>
                         <div className="card-body">
@@ -63,22 +80,22 @@ function Donations() {
                                 </div>
 
                                 <div className="mb-3">
-                                    <label className="form-label fw-bold">Donation Amount ($)</label>
+                                    <label className="form-label fw-bold">Donation Amount (₹)</label>
                                     <input type="number" name="amount" value={formData.amount} onChange={handleChange} className="form-control" placeholder="100.00" step="0.01" required />
                                 </div>
                                 
-                                <button type="submit" className="btn btn-info w-100 text-white fw-bold">Record Donation</button>
+                                <button type="submit" className="btn btn-primary w-100 text-white fw-bold">Record Donation</button>
                             </form>
                         </div>
                     </div>
                 </div>
 
                 <div className="col-md-8">
-                    <div className="card border-info">
+                    <div className="card">
                         <div className="card-body p-0">
                             <div className="table-responsive">
                                 <table className="table table-striped table-hover mb-0">
-                                    <thead className="table-info">
+                                    <thead className="table-light">
                                         <tr>
                                             <th>Donor</th>
                                             <th>Campaign</th>
@@ -89,11 +106,11 @@ function Donations() {
                                     <tbody>
                                         {donations.length > 0 ? donations.map(d => (
                                             <tr key={d.id}>
-                                                <td className="fw-bold">{d.donor_name}</td>
+                                                <td className="fw-bold text-capitalize">{d.donor_name}</td>
                                                 <td>
                                                     {d.campaign_name ? <span className="badge bg-secondary">{d.campaign_name}</span> : <span className="text-muted">-</span>}
                                                 </td>
-                                                <td className="text-success fw-bold">${d.amount.toFixed(2)}</td>
+                                                <td className="fw-bold fw-bold">₹{d.amount.toFixed(2)}</td>
                                                 <td>{d.date ? d.date.substring(0, 10) : ''}</td>
                                             </tr>
                                         )) : (
@@ -113,3 +130,5 @@ function Donations() {
 }
 
 export default Donations;
+
+

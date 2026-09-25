@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { exportTableToPDF } from '../utils/exportToPDF';
 
 function Outcomes() {
     const [outcomes, setOutcomes] = useState([]);
@@ -29,17 +30,32 @@ function Outcomes() {
         }
     };
 
+    const handleExport = () => {
+        const columns = ['Campaign', 'Description', 'Metric Value'];
+        const data = outcomes.map(o => [
+            o.campaign_name || '-',
+            o.description,
+            o.metric_value
+        ]);
+        exportTableToPDF('Project Outcomes', columns, data, 'Outcomes');
+    };
+
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2><span className="text-primary">Project</span> Outcomes</h2>
-                <Link to="/" className="btn btn-secondary">Back to Dashboard</Link>
+                <div>
+                    <button onClick={handleExport} className="btn btn-outline-primary me-2 fw-bold">
+                        <i className="bi bi-file-earmark-pdf me-1"></i> Export PDF
+                    </button>
+                    <Link to="/" className="btn btn-outline-primary">Back to Dashboard</Link>
+                </div>
             </div>
 
             <div className="row">
                 <div className="col-md-4 mb-4">
-                    <div className="card border-primary">
-                        <div className="card-header text-white bg-primary">
+                    <div className="card">
+                        <div className="card-header fw-bold text-uppercase">
                             Record New Outcome
                         </div>
                         <div className="card-body">
@@ -66,7 +82,7 @@ function Outcomes() {
                 </div>
 
                 <div className="col-md-8">
-                    <div className="card border-primary">
+                    <div className="card">
                         <div className="card-body p-0">
                             <div className="table-responsive">
                                 <table className="table table-striped table-hover mb-0">
@@ -84,7 +100,7 @@ function Outcomes() {
                                                     {o.campaign_name ? <span className="badge bg-secondary">{o.campaign_name}</span> : <span className="text-muted">-</span>}
                                                 </td>
                                                 <td>{o.description}</td>
-                                                <td className="fw-bold">{o.metric_value}</td>
+                                                <td className="fw-bold text-capitalize">{o.metric_value}</td>
                                             </tr>
                                         )) : (
                                             <tr>
@@ -103,3 +119,5 @@ function Outcomes() {
 }
 
 export default Outcomes;
+
+

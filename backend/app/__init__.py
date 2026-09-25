@@ -16,7 +16,7 @@ def create_app():
     frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:5173")
     
     # Configure CORS to allow the React frontend
-    CORS(app, supports_credentials=True, origins=[frontend_url, "http://localhost:5173", "http://127.0.0.1:5173"])
+    CORS(app, supports_credentials=True, origins=[frontend_url, "http://localhost:5173", "http://127.0.0.1:5173", "http://192.168.2.45:5173"])
 
     db.init_app(app)
     login_manager.init_app(app)

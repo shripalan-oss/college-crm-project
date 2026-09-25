@@ -8,6 +8,9 @@ import Campaigns from './components/Campaigns';
 import Donations from './components/Donations';
 import Outcomes from './components/Outcomes';
 import Insights from './components/Insights';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
+import VerifyEmail from './components/VerifyEmail';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -41,6 +44,9 @@ function App() {
           <Route path="/" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
           <Route path="/login" element={!user ? <Login setUser={setUser} /> : <Navigate to="/" />} />
           <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
+          <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/" />} />
+          <Route path="/reset-password" element={!user ? <ResetPassword /> : <Navigate to="/" />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/donors" element={user ? <Donors /> : <Navigate to="/login" />} />
           <Route path="/campaigns" element={user ? <Campaigns /> : <Navigate to="/login" />} />
           <Route path="/donations" element={user ? <Donations /> : <Navigate to="/login" />} />

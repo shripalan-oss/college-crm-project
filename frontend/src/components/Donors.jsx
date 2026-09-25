@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { exportTableToPDF } from '../utils/exportToPDF';
 
 function Donors() {
     const [donors, setDonors] = useState([]);
@@ -29,17 +30,32 @@ function Donors() {
         }
     };
 
+    const handleExport = () => {
+        const columns = ['Name', 'Contact', 'Tags'];
+        const data = donors.map(d => [
+            d.name,
+            d.contact,
+            d.tags || '-'
+        ]);
+        exportTableToPDF('Donors Directory', columns, data, 'Donors');
+    };
+
     return (
         <div>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2><span className="text-primary">Donors</span> Directory</h2>
-                <Link to="/" className="btn btn-secondary">Back to Dashboard</Link>
+                <div>
+                    <button onClick={handleExport} className="btn btn-outline-primary me-2 fw-bold">
+                        <i className="bi bi-file-earmark-pdf me-1"></i> Export PDF
+                    </button>
+                    <Link to="/" className="btn btn-outline-primary">Back to Dashboard</Link>
+                </div>
             </div>
 
             <div className="row">
                 <div className="col-md-4 mb-4">
                     <div className="card">
-                        <div className="card-header text-white" style={{ backgroundColor: '#004085' }}>
+                        <div className="card-header fw-bold text-uppercase" >
                             Add New Donor
                         </div>
                         <div className="card-body">
@@ -57,7 +73,7 @@ function Donors() {
                                     <input type="text" name="tags" value={formData.tags} onChange={handleChange} className="form-control" placeholder="e.g. major, recurring" />
                                     <div className="form-text">Separate tags with commas.</div>
                                 </div>
-                                <button type="submit" className="btn btn-success w-100">Add Donor</button>
+                                <button type="submit" className="btn btn-primary w-100">Add Donor</button>
                             </form>
                         </div>
                     </div>
@@ -78,7 +94,7 @@ function Donors() {
                                     <tbody>
                                         {donors.length > 0 ? donors.map(donor => (
                                             <tr key={donor.id}>
-                                                <td className="fw-bold">{donor.name}</td>
+                                                <td className="fw-bold text-capitalize">{donor.name}</td>
                                                 <td>{donor.contact}</td>
                                                 <td>
                                                     {donor.tags ? <span className="badge bg-secondary">{donor.tags}</span> : <span className="text-muted">-</span>}
@@ -101,3 +117,5 @@ function Donors() {
 }
 
 export default Donors;
+
+
