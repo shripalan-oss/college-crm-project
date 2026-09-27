@@ -90,28 +90,7 @@ def register():
     db.session.add(user)
     db.session.commit()
 
-    # Generate verification token
-    token = generate_token(user.email)
-    
-    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
-    verify_url = f"{frontend_url}/verify-email?token={token}"
-    
-    try:
-        send_email(
-            user.email,
-            "Verify your Collab CRM Account",
-            f"Click the link to verify your email: {verify_url}"
-        )
-    except Exception as e:
-        print(f"Failed to send email to {user.email}: {e}")
-        # Retain simulation for backup/debugging
-        print(f"\n--- EMAIL SIMULATION ---")
-        print(f"To: {user.email}")
-        print(f"Subject: Verify your Collab CRM Account")
-        print(f"Click the link to verify your email: {verify_url}")
-        print(f"------------------------\n")
-
-    return jsonify({"message": "Account created! Please check your email to verify your account."}), 201
+    return jsonify({"message": "Account created! You can now log in."}), 201
 
 @auth_bp.route("/api/auth/verify-email", methods=["POST"])
 def verify_email():
@@ -137,9 +116,6 @@ def login():
     user = User.query.filter_by(email=email).first()
 
     if user and check_password_hash(user.password_hash, password):
-        if not user.is_verified:
-            return jsonify({"error": "Please verify your email before logging in."}), 403
-        
         login_user(user)
         return jsonify({"message": "Login successful", "user": user.to_dict()}), 200
 
