@@ -3,13 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_cors import CORS
-from flask_mail import Mail
 from config import Config
 
 db = SQLAlchemy()
 login_manager = LoginManager()
 migrate = Migrate()
-mail = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -20,18 +18,9 @@ def create_app():
     # Configure CORS to allow the React frontend
     CORS(app, supports_credentials=True, origins=[frontend_url, "http://localhost:5173", "http://127.0.0.1:5173", "http://192.168.2.45:5173"])
 
-    # Email settings
-    app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
-    app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-    app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
-    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_USERNAME')
-
     db.init_app(app)
     login_manager.init_app(app)
     migrate.init_app(app, db)
-    mail.init_app(app)
     
     # Send a 401 JSON response instead of redirecting to login page
     @login_manager.unauthorized_handler

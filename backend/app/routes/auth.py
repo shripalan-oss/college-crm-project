@@ -4,11 +4,37 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from email_validator import validate_email, EmailNotValidError
-from app import db, mail
+from app import db
 from app.models import User, Tenant
-from flask_mail import Message
+import requests
 
 auth_bp = Blueprint("auth", __name__)
+
+def send_email(to_email, subject, body):
+    try:
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {os.environ.get('RESEND_API_KEY')}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "from": "onboarding@resend.dev",
+                "to": [to_email],
+                "subject": subject,
+                "text": body
+            },
+            timeout=10
+        )
+        if response.status_code == 200:
+            print(f"Email sent to {to_email}")
+            return True
+        else:
+            print(f"Failed to send email to {to_email}: {response.status_code} {response.text}")
+            return False
+    except Exception as e:
+        print(f"Exception sending email to {to_email}: {e}")
+        return False
 
 def generate_token(email):
     serializer = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
@@ -71,13 +97,11 @@ def register():
     verify_url = f"{frontend_url}/verify-email?token={token}"
     
     try:
-        msg = Message(
-            subject="Verify your Collab CRM Account",
-            recipients=[user.email],
-            body=f"Click the link to verify your email: {verify_url}"
+        send_email(
+            user.email,
+            "Verify your Collab CRM Account",
+            f"Click the link to verify your email: {verify_url}"
         )
-        mail.send(msg)
-        print(f"Verification email successfully sent to {user.email}")
     except Exception as e:
         print(f"Failed to send email to {user.email}: {e}")
         # Retain simulation for backup/debugging
@@ -132,13 +156,11 @@ def forgot_password():
         reset_url = f"{frontend_url}/reset-password?token={token}"
         
         try:
-            msg = Message(
-                subject="Reset your Collab CRM Password",
-                recipients=[user.email],
-                body=f"Click the link to reset your password: {reset_url}"
+            send_email(
+                user.email,
+                "Reset your Collab CRM Password",
+                f"Click the link to reset your password: {reset_url}"
             )
-            mail.send(msg)
-            print(f"Password reset email successfully sent to {user.email}")
         except Exception as e:
             print(f"Failed to send email to {user.email}: {e}")
             print(f"\n--- EMAIL SIMULATION ---")
