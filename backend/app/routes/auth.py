@@ -4,8 +4,9 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from email_validator import validate_email, EmailNotValidError
-from app import db
+from app import db, mail
 from app.models import User, Tenant
+from flask_mail import Message
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -66,15 +67,25 @@ def register():
     # Generate verification token
     token = generate_token(user.email)
     
-    # In a real app, you would use Flask-Mail to send this. 
-    # For now, we simulate sending the email in the backend console.
     frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
     verify_url = f"{frontend_url}/verify-email?token={token}"
-    print(f"\n--- EMAIL SIMULATION ---")
-    print(f"To: {user.email}")
-    print(f"Subject: Verify your Collab CRM Account")
-    print(f"Click the link to verify your email: {verify_url}")
-    print(f"------------------------\n")
+    
+    try:
+        msg = Message(
+            subject="Verify your Collab CRM Account",
+            recipients=[user.email],
+            body=f"Click the link to verify your email: {verify_url}"
+        )
+        mail.send(msg)
+        print(f"Verification email successfully sent to {user.email}")
+    except Exception as e:
+        print(f"Failed to send email to {user.email}: {e}")
+        # Retain simulation for backup/debugging
+        print(f"\n--- EMAIL SIMULATION ---")
+        print(f"To: {user.email}")
+        print(f"Subject: Verify your Collab CRM Account")
+        print(f"Click the link to verify your email: {verify_url}")
+        print(f"------------------------\n")
 
     return jsonify({"message": "Account created! Please check your email to verify your account."}), 201
 
@@ -120,11 +131,21 @@ def forgot_password():
         frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
         reset_url = f"{frontend_url}/reset-password?token={token}"
         
-        print(f"\n--- EMAIL SIMULATION ---")
-        print(f"To: {user.email}")
-        print(f"Subject: Reset your Collab CRM Password")
-        print(f"Click the link to reset your password: {reset_url}")
-        print(f"------------------------\n")
+        try:
+            msg = Message(
+                subject="Reset your Collab CRM Password",
+                recipients=[user.email],
+                body=f"Click the link to reset your password: {reset_url}"
+            )
+            mail.send(msg)
+            print(f"Password reset email successfully sent to {user.email}")
+        except Exception as e:
+            print(f"Failed to send email to {user.email}: {e}")
+            print(f"\n--- EMAIL SIMULATION ---")
+            print(f"To: {user.email}")
+            print(f"Subject: Reset your Collab CRM Password")
+            print(f"Click the link to reset your password: {reset_url}")
+            print(f"------------------------\n")
 
     # Always return a generic message to prevent email enumeration
     return jsonify({"message": "If an account with that email exists, a password reset link has been sent."}), 200
