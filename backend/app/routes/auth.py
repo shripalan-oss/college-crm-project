@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -67,7 +68,8 @@ def register():
     
     # In a real app, you would use Flask-Mail to send this. 
     # For now, we simulate sending the email in the backend console.
-    verify_url = f"{request.host_url.replace('5000', '5173')}verify-email?token={token}"
+    frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+    verify_url = f"{frontend_url}/verify-email?token={token}"
     print(f"\n--- EMAIL SIMULATION ---")
     print(f"To: {user.email}")
     print(f"Subject: Verify your Collab CRM Account")
@@ -115,7 +117,8 @@ def forgot_password():
     
     if user:
         token = generate_token(user.email)
-        reset_url = f"{request.host_url.replace('5000', '5173')}reset-password?token={token}"
+        frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+        reset_url = f"{frontend_url}/reset-password?token={token}"
         
         print(f"\n--- EMAIL SIMULATION ---")
         print(f"To: {user.email}")
