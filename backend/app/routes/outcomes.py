@@ -15,9 +15,15 @@ def list_outcomes():
 @login_required
 def add_outcome():
     data = request.get_json()
+    
+    campaign_id = data.get("campaign_id")
+    campaign = Campaign.query.filter_by(id=campaign_id, tenant_id=current_user.tenant_id).first()
+    if not campaign:
+        return jsonify({"error": "Campaign not found or unauthorized"}), 404
+        
     outcome = Outcome(
         tenant_id=current_user.tenant_id,
-        campaign_id=data.get("campaign_id"),
+        campaign_id=campaign.id,
         description=data.get("description"),
         metric_value=float(data.get("metric_value")) if data.get("metric_value") else None
     )
