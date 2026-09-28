@@ -15,10 +15,23 @@ def list_donations():
 @login_required
 def add_donation():
     data = request.get_json()
+    
+    # Verify Donor belongs to Tenant
+    donor = Donor.query.filter_by(id=data.get("donor_id"), tenant_id=current_user.tenant_id).first()
+    if not donor:
+        return jsonify({"error": "Donor not found or unauthorized"}), 404
+        
+    # Verify Campaign belongs to Tenant (if provided)
+    campaign_id = data.get("campaign_id")
+    if campaign_id:
+        campaign = Campaign.query.filter_by(id=campaign_id, tenant_id=current_user.tenant_id).first()
+        if not campaign:
+            return jsonify({"error": "Campaign not found or unauthorized"}), 404
+
     donation = Donation(
         tenant_id=current_user.tenant_id,
-        donor_id=data.get("donor_id"),
-        campaign_id=data.get("campaign_id") or None,
+        donor_id=donor.id,
+        campaign_id=campaign_id or None,
         amount=float(data.get("amount"))
     )
     db.session.add(donation)
