@@ -6,6 +6,7 @@ import { exportTableToPDF } from '../utils/exportToPDF';
 function Donors() {
     const [donors, setDonors] = useState([]);
     const [formData, setFormData] = useState({ name: '', contact: '', tags: '' });
+    const [errorMsg, setErrorMsg] = useState('');
 
     const fetchDonors = () => {
         axios.get(import.meta.env.VITE_API_URL + '/api/donors')
@@ -26,7 +27,7 @@ function Donors() {
             setFormData({ name: '', contact: '', tags: '' });
             fetchDonors();
         } catch (error) {
-            console.error("Error adding donor", error);
+            setErrorMsg(error.response?.data?.error || 'An error occurred'); console.error(error);
         }
     };
 
@@ -60,6 +61,7 @@ function Donors() {
                         </div>
                         <div className="card-body">
                             <form onSubmit={handleSubmit}>
+                {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
                                 <div className="mb-3">
                                     <label className="form-label fw-bold">Donor Name</label>
                                     <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-control" placeholder="e.g. John Doe" required />

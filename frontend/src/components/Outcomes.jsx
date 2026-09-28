@@ -7,6 +7,7 @@ function Outcomes() {
     const [outcomes, setOutcomes] = useState([]);
     const [campaigns, setCampaigns] = useState([]);
     const [formData, setFormData] = useState({ campaign_id: '', description: '', metric_value: '' });
+    const [errorMsg, setErrorMsg] = useState('');
 
     const fetchData = () => {
         axios.get(import.meta.env.VITE_API_URL + '/api/outcomes').then(res => setOutcomes(res.data)).catch(console.error);
@@ -26,7 +27,7 @@ function Outcomes() {
             setFormData({ ...formData, description: '', metric_value: '' });
             fetchData();
         } catch (error) {
-            console.error("Error adding outcome", error);
+            setErrorMsg(error.response?.data?.error || 'An error occurred'); console.error(error);
         }
     };
 
@@ -60,6 +61,7 @@ function Outcomes() {
                         </div>
                         <div className="card-body">
                             <form onSubmit={handleSubmit}>
+                {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
                                 <div className="mb-3">
                                     <label className="form-label fw-bold">Select Campaign</label>
                                     <select name="campaign_id" value={formData.campaign_id} onChange={handleChange} className="form-select" required>

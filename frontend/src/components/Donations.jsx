@@ -8,6 +8,7 @@ function Donations() {
     const [donors, setDonors] = useState([]);
     const [campaigns, setCampaigns] = useState([]);
     const [formData, setFormData] = useState({ donor_id: '', campaign_id: '', amount: '' });
+    const [errorMsg, setErrorMsg] = useState('');
 
     const fetchData = () => {
         axios.get(import.meta.env.VITE_API_URL + '/api/donations').then(res => setDonations(res.data)).catch(console.error);
@@ -28,7 +29,7 @@ function Donations() {
             setFormData({ ...formData, amount: '' });
             fetchData();
         } catch (error) {
-            console.error("Error adding donation", error);
+            setErrorMsg(error.response?.data?.error || 'An error occurred'); console.error(error);
         }
     };
 
@@ -63,6 +64,7 @@ function Donations() {
                         </div>
                         <div className="card-body">
                             <form onSubmit={handleSubmit}>
+                {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
                                 <div className="mb-3">
                                     <label className="form-label fw-bold">Select Donor</label>
                                     <select name="donor_id" value={formData.donor_id} onChange={handleChange} className="form-select" required>

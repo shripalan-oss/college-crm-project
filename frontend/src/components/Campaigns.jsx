@@ -6,6 +6,7 @@ import { exportTableToPDF } from '../utils/exportToPDF';
 function Campaigns() {
     const [campaigns, setCampaigns] = useState([]);
     const [formData, setFormData] = useState({ name: '', goal_amount: '' });
+    const [errorMsg, setErrorMsg] = useState('');
 
     const fetchCampaigns = () => {
         axios.get(import.meta.env.VITE_API_URL + '/api/campaigns')
@@ -26,7 +27,7 @@ function Campaigns() {
             setFormData({ name: '', goal_amount: '' });
             fetchCampaigns();
         } catch (error) {
-            console.error("Error adding campaign", error);
+            setErrorMsg(error.response?.data?.error || 'An error occurred'); console.error(error);
         }
     };
 
@@ -59,6 +60,7 @@ function Campaigns() {
                         </div>
                         <div className="card-body">
                             <form onSubmit={handleSubmit}>
+                {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
                                 <div className="mb-3">
                                     <label className="form-label fw-bold">Campaign Name</label>
                                     <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-control" placeholder="e.g. Annual Alumni Fund" required />
