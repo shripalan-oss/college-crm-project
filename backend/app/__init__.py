@@ -38,6 +38,11 @@ def create_app():
     login_manager.init_app(app)
     migrate.init_app(app, db)
     
+    from app.models import User
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
     # Send a 401 JSON response instead of redirecting to login page
     @login_manager.unauthorized_handler
     def unauthorized():
