@@ -16,5 +16,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # Required for cookies to work across different domains (Vercel -> Render)
-    SESSION_COOKIE_SAMESITE = "None"
-    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_SAMESITE = "None" if os.environ.get("DATABASE_URL") else "Lax"
+    SESSION_COOKIE_SECURE = True if os.environ.get("DATABASE_URL") else False
