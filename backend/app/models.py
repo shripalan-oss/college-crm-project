@@ -70,6 +70,7 @@ class Donation(db.Model):
     campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.id"))
     amount = db.Column(db.Float, nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(20), default="Pending")
 
     donor = db.relationship("Donor", backref="donations")
     campaign = db.relationship("Campaign", backref="donations")
@@ -82,7 +83,8 @@ class Donation(db.Model):
             "campaign_id": self.campaign_id,
             "campaign_name": self.campaign.name if self.campaign else None,
             "amount": self.amount,
-            "date": self.date.isoformat() if self.date else None
+            "date": self.date.isoformat() if self.date else None,
+            "status": self.status
         }
 
 class Outcome(db.Model):
@@ -101,4 +103,28 @@ class Outcome(db.Model):
             "campaign_name": self.campaign.name if self.campaign else None,
             "description": self.description,
             "metric_value": self.metric_value
+        }
+
+class AuditLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tenant_id = db.Column(db.Integer, db.ForeignKey("tenant.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    action = db.Column(db.String(50), nullable=False)
+    entity_type = db.Column(db.String(50), nullable=False)
+    entity_id = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    details = db.Column(db.String(500))
+
+    user = db.relationship("User")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "user_name": self.user.name if self.user else "Unknown",
+            "action": self.action,
+            "entity_type": self.entity_type,
+            "entity_id": self.entity_id,
+            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+            "details": self.details
         }

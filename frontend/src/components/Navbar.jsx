@@ -44,6 +44,11 @@ function Navbar({ user, setUser }) {
                         <li className="nav-item">
                             <Link className="nav-link" to="/donors/insights">Insights</Link>
                         </li>
+                        {user && user.role === 'org-admin' && (
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/audit-log">Audit Log</Link>
+                            </li>
+                        )}
                         <li className="nav-item">
                             <button className="nav-link btn btn-link" onClick={handleLogout}>Logout</button>
                         </li>

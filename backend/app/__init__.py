@@ -32,7 +32,7 @@ def create_app():
     frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:5173")
     
     # Configure CORS to allow the React frontend
-    CORS(app, supports_credentials=True, origins=[frontend_url, "http://localhost:5173", "http://127.0.0.1:5173", "http://192.168.2.45:5173"])
+    CORS(app, supports_credentials=True, origins=[frontend_url, "http://localhost:5173", "http://127.0.0.1:5173", "http://192.168.1.21:5173", "http://localhost:5174", "http://127.0.0.1:5174", "http://192.168.1.21:5174"])
 
     db.init_app(app)
     login_manager.init_app(app)
@@ -54,6 +54,9 @@ def create_app():
     from app.routes.campaigns import campaigns_bp
     from app.routes.donations import donations_bp
     from app.routes.outcomes import outcomes_bp
+    from app.routes.analytics import analytics_bp
+    from app.routes.audit import audit_bp
+    from app.routes.reports import reports_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(donors_bp)
@@ -61,5 +64,8 @@ def create_app():
     app.register_blueprint(campaigns_bp)
     app.register_blueprint(donations_bp)
     app.register_blueprint(outcomes_bp)
+    app.register_blueprint(analytics_bp)
+    app.register_blueprint(audit_bp)
+    app.register_blueprint(reports_bp)
 
     return app

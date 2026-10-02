@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint
+from app.utils import log_audit, role_required, parse_id
+from flask import request, jsonify
 from flask_login import login_required, current_user
 from app import db
 from app.models import Outcome, Campaign
@@ -29,4 +31,15 @@ def add_outcome():
     )
     db.session.add(outcome)
     db.session.commit()
+    log_audit('Create Outcome', 'Outcome', entity_id=outcome.id, details='Created outcome')
     return jsonify(outcome.to_dict()), 201
+
+@outcomes_bp.route("/api/outcomes/<int:id>", methods=["DELETE"])
+@login_required
+@role_required("org-admin")
+def delete_outcome(id):
+    outcome = Outcome.query.filter_by(id=id, tenant_id=current_user.tenant_id).first_or_404()
+    db.session.delete(outcome)
+    db.session.commit()
+    log_audit("Delete Outcome", "Outcome", entity_id=id, details="Deleted outcome")
+    return jsonify({"message": "Outcome deleted"}), 200

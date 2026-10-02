@@ -1,4 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint
+from app.utils import log_audit, role_required, parse_id
+from flask import request, jsonify
 from flask_login import login_required, current_user
 from app import db
 from app.models import Donation, Donor, Campaign
@@ -36,4 +38,31 @@ def add_donation():
     )
     db.session.add(donation)
     db.session.commit()
+    log_audit('Create Donation', 'Donation', entity_id=donation.id, details=f'Created donation amount {donation.amount}')
     return jsonify(donation.to_dict()), 201
+
+@donations_bp.route("/api/donations/<int:id>", methods=["DELETE"])
+@login_required
+@role_required("org-admin")
+def delete_donation(id):
+    donation = Donation.query.filter_by(id=id, tenant_id=current_user.tenant_id).first_or_404()
+    db.session.delete(donation)
+    db.session.commit()
+    log_audit("Delete Donation", "Donation", entity_id=id, details="Deleted donation")
+    return jsonify({"message": "Donation deleted"}), 200
+
+@donations_bp.route("/api/donations/<int:id>/status", methods=["PUT"])
+@login_required
+@role_required("org-admin")
+def update_donation_status(id):
+    donation = Donation.query.filter_by(id=id, tenant_id=current_user.tenant_id).first_or_404()
+    
+    # State machine: Pending -> Verified -> Receipted
+    if donation.status == "Pending":
+        donation.status = "Verified"
+    elif donation.status == "Verified":
+        donation.status = "Receipted"
+        
+    db.session.commit()
+    log_audit("Update Donation Status", "Donation", entity_id=id, details=f"Status changed to {donation.status}")
+    return jsonify(donation.to_dict()), 200

@@ -11,6 +11,7 @@ import Insights from './components/Insights';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import VerifyEmail from './components/VerifyEmail';
+import AuditLog from './components/AuditLog';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -47,11 +48,12 @@ function App() {
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/" />} />
           <Route path="/reset-password" element={!user ? <ResetPassword /> : <Navigate to="/" />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/donors" element={user ? <Donors /> : <Navigate to="/login" />} />
-          <Route path="/campaigns" element={user ? <Campaigns /> : <Navigate to="/login" />} />
-          <Route path="/donations" element={user ? <Donations /> : <Navigate to="/login" />} />
-          <Route path="/outcomes" element={user ? <Outcomes /> : <Navigate to="/login" />} />
-          <Route path="/donors/insights" element={user ? <Insights /> : <Navigate to="/login" />} />
+          <Route path="/donors" element={user ? <Donors user={user} /> : <Navigate to="/login" />} />
+          <Route path="/campaigns" element={user ? <Campaigns user={user} /> : <Navigate to="/login" />} />
+          <Route path="/donations" element={user ? <Donations user={user} /> : <Navigate to="/login" />} />
+          <Route path="/outcomes" element={user ? <Outcomes user={user} /> : <Navigate to="/login" />} />
+          <Route path="/donors/insights" element={user ? <Insights user={user} /> : <Navigate to="/login" />} />
+          <Route path="/audit-log" element={user && user.role === 'org-admin' ? <AuditLog /> : <Navigate to="/" />} />
         </Routes>
       </div>
       <footer className="footer mt-auto">
